@@ -1,11 +1,3 @@
 export default async function Home() {
-  return (
-    <>
-      <h2>Welcome</h2>
-      Hello, WEB!
-      <p>
-        <img src="/hello.png" width="80" alt="" />
-      </p>
-    </>
-  );
+  return <div className="text-xl p-[10px]">게시판</div>;
 }

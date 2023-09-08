@@ -1,7 +1,9 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Control } from "./control";
+import { Control } from "./Control";
+import Header from "./Header";
+import { fetchPostsList } from "@/api/posts/PostsListApi";
 
 export const metadata: Metadata = {
   title: "Nextjs 13",
@@ -13,27 +15,13 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/topics`, {
-    cache: "no-cache",
-  });
-  const topics = await resp.json();
-  console.log(topics);
+  const posts = await fetchPostsList();
 
   return (
     <html>
       <body>
-        <h1>
-          <a href="/">WEB</a>
-        </h1>
-        <ol>
-          {topics.map((topic: { id: number; title: string }) => {
-            return (
-              <li key={topic.id}>
-                <Link href={`/read/${topic.id}`}>{topic.title}</Link>
-              </li>
-            );
-          })}
-        </ol>
+        {/* @ts-expect-error Async Server Component */}
+        <Header />
         {children}
         {/* server component 내에서는 현재 동적 라우팅의 값([id])을 layout 안에서는 알 수 없다.
         useParams를 사용해야 하는데 useParams는 client component다.
@@ -41,6 +29,26 @@ export default async function RootLayout({
         server component의 이점을 포기하기는 싫기 때문에
         client component의 기능이 필요한 부분만 별도의 컴포넌트로 분리했다.  */}
         <Control />
+        <div className="min-w-[1200px] px-[10px]">
+          {posts?.map((el: { id: string; title: string }, idx: number) => {
+            return (
+              <div
+                className={`border-x ${idx === 0 ? "border-t" : ""}`}
+                key={el.id}
+              >
+                <Link
+                  className="flex items-center border-b h-[50px] px-[10px]"
+                  href={`/read/${el.id}`}
+                >
+                  {el.title}
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+        <div className="flex justify-center items-center cursor-pointer w-[60px] h-[40px] text-white bg-orange-500 rounded ml-[10px] mt-[10px]">
+          <Link href={"/create"}>글쓰기</Link>
+        </div>
       </body>
     </html>
   );

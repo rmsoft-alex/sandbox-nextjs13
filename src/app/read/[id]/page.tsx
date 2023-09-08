@@ -1,3 +1,5 @@
+import { fetchPostDetail } from "@/api/posts/PostDetailApi";
+
 type ReadProps = {
   params: {
     id: string;
@@ -6,15 +8,14 @@ type ReadProps = {
 
 export default async function Read(props: ReadProps) {
   const id = props.params.id;
-  const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/topics/${id}`, {
-    cache: "no-cache",
-  });
-  const topic = await resp.json();
+  const post = await fetchPostDetail(id);
 
   return (
-    <>
-      <h2>{topic.title}</h2>
-      {topic.body}
-    </>
+    <div className="px-[10px]">
+      <div className="flex flex-col justify-between items-center min-w-[1200px] h-[300px] border mt-[10px] rounded">
+        <h2 className="text-xl">{post.title}</h2>
+        <div className="h-[200px]">{post.body}</div>
+      </div>
+    </div>
   );
 }
