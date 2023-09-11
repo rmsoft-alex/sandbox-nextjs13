@@ -1,3 +1,14 @@
+import {
+  Backend,
+  IncludesFile,
+  IsCheck,
+  MethodZod,
+  Path,
+  Post,
+  User,
+} from "@/app/schema";
+import * as z from "zod";
+
 export const BackEnd = {
   USER: 0,
   ADMIN: 1,
@@ -20,3 +31,12 @@ export const Method = {
   PUT: "PUT",
   DELETE: "DELETE",
 } as const;
+
+export type PathType = z.infer<typeof Path>;
+export type MethodType = z.infer<typeof MethodZod>;
+export type IncludesFileType = z.infer<typeof IncludesFile>;
+export type BackendType = z.infer<typeof Backend>;
+export type IsCheckType = z.infer<typeof IsCheck>;
+
+export type UserType = z.infer<typeof User>;
+export type PostType = z.infer<typeof Post>;

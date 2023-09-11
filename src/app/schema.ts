@@ -5,14 +5,12 @@ export const User = z.object({
   name: z.string().trim(),
   age: z.number(),
 });
-export type UserType = z.infer<typeof User>;
 
 export const Post = z.object({
   id: z.string().trim(),
   title: z.string().trim(),
   body: z.string().trim(),
 });
-export type PostType = z.infer<typeof Post>;
 
 export const PostsList = z
   .object({
@@ -23,12 +21,7 @@ export const PostsList = z
   .array();
 
 export const Path = z.string();
-export type PathType = z.infer<typeof Path>;
-export const Method = z.string();
-export type MethodType = z.infer<typeof Method>;
+export const MethodZod = z.string();
 export const IncludesFile = z.boolean().optional().default(false);
-export type IncludesFileType = z.infer<typeof IncludesFile>;
 export const Backend = z.number().optional().default(0);
-export type BackendType = z.infer<typeof Backend>;
 export const IsCheck = z.boolean().optional().default(false);
-export type IsCheckType = z.infer<typeof IsCheck>;
