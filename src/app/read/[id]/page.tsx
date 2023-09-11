@@ -13,8 +13,8 @@ export default async function Read(props: ReadProps) {
   return (
     <div className="px-[10px]">
       <div className="flex flex-col justify-between items-center min-w-[1200px] h-[300px] border mt-[10px] rounded">
-        <h2 className="text-xl">{post.title}</h2>
-        <div className="h-[200px]">{post.body}</div>
+        <h2 className="text-xl">{post?.title}</h2>
+        <div className="h-[200px]">{post?.body}</div>
       </div>
     </div>
   );

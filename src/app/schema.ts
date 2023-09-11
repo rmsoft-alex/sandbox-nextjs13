@@ -22,9 +22,9 @@ export const PostsList = z
   })
   .array();
 
-export const Path = z.string({ required_error: "api를 입력해주세요." });
+export const Path = z.string();
 export type PathType = z.infer<typeof Path>;
-export const Method = z.string({ required_error: "method를 입력해주세요." });
+export const Method = z.string();
 export type MethodType = z.infer<typeof Method>;
 export const IncludesFile = z.boolean().optional().default(false);
 export type IncludesFileType = z.infer<typeof IncludesFile>;

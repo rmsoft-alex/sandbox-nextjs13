@@ -20,7 +20,6 @@ export default async function RootLayout({
   return (
     <html>
       <body>
-        {/* @ts-expect-error Async Server Component */}
         <Header />
         {children}
         {/* server component 내에서는 현재 동적 라우팅의 값([id])을 layout 안에서는 알 수 없다.
