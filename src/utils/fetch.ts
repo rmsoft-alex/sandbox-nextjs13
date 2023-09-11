@@ -1,11 +1,11 @@
 import {
+  BackEndURL,
   BackendType,
   IncludesFileType,
   IsCheckType,
   MethodType,
   PathType,
-} from "@/app/schema";
-import { BackEndURL } from "../types/type";
+} from "../types/type";
 import * as z from "zod";
 import { ZodErrorReport } from "./error";
 
