@@ -7,31 +7,31 @@ import {
 } from "@/app/schema";
 import { BackEndURL } from "../types/type";
 import * as z from "zod";
+import { ZodErrorReport } from "./error";
 
 /**
- *
- * @param path
+ * @param path path
  * @param method Method.[GET, POST, PUT, DELETE]
  * @param requestSchema requestData 스키마
  * @param requestData requestData
  * @param responseSchema responseData 스키마
- * @param includesFile
- * @param backend BackEnd.[USER, ADMIN]
- * @param isCheck server alive?
+ * @param includesFile // 파일 처부 여부 | default false
+ * @param backend BackEnd.[USER, ADMIN] | default USER
+ * @param isCheck server alive? optional | default false
  * @returns fetch 요청에 대한 응답
  */
 export async function Fetch<
   TQuerySchema extends z.Schema,
   TResponseSchema extends z.Schema
 >(
-  path: PathType,
-  method: MethodType,
+  path: PathType, // path
+  method: MethodType, // method
   requestSchema: TQuerySchema, // request 스키마
   requestData: z.infer<TQuerySchema>,
   responseSchema: TResponseSchema, //response 스키마
-  includesFile: IncludesFileType,
-  backend: BackendType,
-  isCheck: IsCheckType
+  includesFile: IncludesFileType, // file 첨부 여부
+  backend: BackendType, // .env.local에서 가져올 값
+  isCheck: IsCheckType // server 살아 있는지 여부 - 현재는 없음
 ): Promise<z.infer<TResponseSchema>> {
   const headers: HeadersInit = {};
   if (!includesFile) headers["Content-Type"] = "application/json";
@@ -59,14 +59,7 @@ export async function Fetch<
 
   const url = new URL(urlFullPath);
 
-  const res = buildData(
-    method,
-    init,
-    includesFile,
-    requestSchema,
-    requestData,
-    url
-  );
+  buildData(method, init, includesFile, requestSchema, requestData, url);
 
   return fetch(url, init)
     .then(async (res) => {
@@ -75,12 +68,8 @@ export async function Fetch<
       if (responseSchema.safeParse(data).success) {
         return data;
       } else {
-        const { error } = responseSchema.safeParse(
-          data
-        ) as z.SafeParseError<string>;
-        throw error.issues.map(
-          (el) => `pathname: ${url.pathname} | [${el.path}]: ${el.message}`
-        );
+        // zod error 처리
+        ZodErrorReport(responseSchema, data);
       }
     })
     .catch((error) => {
@@ -99,14 +88,7 @@ const buildData = <TQuerySchema extends z.Schema>(
   // requestData 여부
   if (!requestData) return;
   // requestData type validate
-  const { error } = requestSchema.safeParse(
-    requestData
-  ) as z.SafeParseError<string>;
-  if (error) {
-    throw error.issues.map(
-      (el) => `pathname: ${url.pathname} | [${el.path}]: ${el.message}`
-    );
-  }
+  ZodErrorReport(requestSchema, requestData);
 
   switch (method) {
     case "POST":
