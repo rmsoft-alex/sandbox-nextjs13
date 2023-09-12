@@ -1,27 +1,30 @@
 import * as z from "zod";
 
-export const User = z.object({
+export const UserSchema = z.object({
   id: z.number(),
   name: z.string().trim(),
   age: z.number(),
 });
 
-export const Post = z.object({
+export const PostSchema = z.object({
   id: z.string().trim(),
   title: z.string().trim(),
   body: z.string().trim(),
 });
 
-export const PostsList = z
-  .object({
-    id: z.string().trim(),
-    title: z.string().trim(),
-    body: z.string().trim(),
-  })
-  .array();
+export const PostsListSchema = PostSchema.array();
 
-export const Path = z.string();
-export const MethodZod = z.string();
-export const IncludesFile = z.boolean().optional().default(false);
-export const Backend = z.number().optional().default(0);
-export const IsCheck = z.boolean().optional().default(false);
+export const PathSchema = z.string();
+export const MethodZodSchema = z.string();
+export const IncludesFileSchema = z.boolean().optional().default(false);
+export const BackendSchema = z.number().optional().default(0);
+export const IsCheckSchema = z.boolean().optional().default(false);
+
+// 전체 스토어에 대한 스키마 정의 (state + actions)
+export const PostStoreSchema = z.object({
+  posts: PostsListSchema,
+  actions: z.object({
+    addPost: z.function().args(PostSchema),
+    removePost: z.function().args(z.string()),
+  }),
+});
