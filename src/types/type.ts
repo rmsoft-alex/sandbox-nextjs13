@@ -1,14 +1,16 @@
 import {
-  Backend,
-  IncludesFile,
-  IsCheck,
-  MethodZod,
-  Path,
-  Post,
-  User,
+  BackendSchema,
+  IncludesFileSchema,
+  IsCheckSchema,
+  MethodZodSchema,
+  PathSchema,
+  PostSchema,
+  PostStoreSchema,
+  UserSchema,
 } from "@/app/schema";
 import * as z from "zod";
 
+// 공통 fetch 에서 사용할 type
 export const BackEnd = {
   USER: 0,
   ADMIN: 1,
@@ -32,11 +34,13 @@ export const Method = {
   DELETE: "DELETE",
 } as const;
 
-export type PathType = z.infer<typeof Path>;
-export type MethodType = z.infer<typeof MethodZod>;
-export type IncludesFileType = z.infer<typeof IncludesFile>;
-export type BackendType = z.infer<typeof Backend>;
-export type IsCheckType = z.infer<typeof IsCheck>;
+export type PathType = z.infer<typeof PathSchema>;
+export type MethodType = z.infer<typeof MethodZodSchema>;
+export type IncludesFileType = z.infer<typeof IncludesFileSchema>;
+export type BackendType = z.infer<typeof BackendSchema>;
+export type IsCheckType = z.infer<typeof IsCheckSchema>;
 
-export type UserType = z.infer<typeof User>;
-export type PostType = z.infer<typeof Post>;
+export type UserType = z.infer<typeof UserSchema>;
+export type PostType = z.infer<typeof PostSchema>;
+
+export type PostStoreState = z.infer<typeof PostStoreSchema>;
