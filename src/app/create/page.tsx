@@ -1,10 +1,15 @@
 "use client";
 
 import { createPost } from "@/api/posts/CreatePostApi";
+import { usePostActions, usePosts } from "@/hooks/usePostStore";
 import { useRouter } from "next/navigation";
 
 export default function Create() {
   const router = useRouter();
+
+  const posts = usePosts();
+  const { addPost } = usePostActions();
+
   return (
     <form
       className="min-w-[1200px] px-[10px]"
@@ -14,10 +19,19 @@ export default function Create() {
         }
       ) => {
         e.preventDefault();
+        const id = self.crypto.randomUUID();
         const title = e.target.title.value;
         const body = e.target.body.value;
+
+        // zustand의 action 사용
+        addPost({
+          id,
+          title,
+          body,
+        });
+        // 글 등록 fetch
         createPost({
-          id: self.crypto.randomUUID(),
+          id,
           title,
           body,
         });
