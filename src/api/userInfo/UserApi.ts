@@ -1,4 +1,4 @@
-import { User } from "@/app/schema";
+import { UserSchema } from "@/app/schema";
 import { BackEnd, Method } from "@/types/type";
 import { Fetch } from "@/utils/fetch";
 import { z } from "zod";
@@ -9,7 +9,7 @@ export async function fetchUserInfo() {
     Method.GET,
     z.null(),
     null,
-    User,
+    UserSchema,
     false,
     BackEnd.USER,
     false
