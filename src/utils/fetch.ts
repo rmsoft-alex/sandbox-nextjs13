@@ -1,13 +1,13 @@
-import {
-  BackEndURL,
-  BackendType,
-  IncludesFileType,
-  IsCheckType,
-  MethodType,
-  PathType,
-} from "../types/type";
+import { BackEndURL } from "@/types/type";
 import * as z from "zod";
 import { ZodErrorReport } from "./error";
+import {
+  BackendSchema,
+  IncludesFileSchema,
+  IsCheckSchema,
+  MethodZodSchema,
+  PathSchema,
+} from "@/app/schema";
 
 /**
  * @param path path
@@ -24,14 +24,14 @@ export async function Fetch<
   TQuerySchema extends z.Schema,
   TResponseSchema extends z.Schema
 >(
-  path: PathType, // path
-  method: MethodType, // method
+  path: z.infer<typeof PathSchema>, // path
+  method: z.infer<typeof MethodZodSchema>, // method
   requestSchema: TQuerySchema, // request 스키마
   requestData: z.infer<TQuerySchema>,
   responseSchema: TResponseSchema, //response 스키마
-  includesFile: IncludesFileType, // file 첨부 여부
-  backend: BackendType, // .env.local에서 가져올 값
-  isCheck: IsCheckType // server 살아 있는지 여부 - 현재는 없음
+  includesFile: z.infer<typeof IncludesFileSchema>, // file 첨부 여부
+  backend: z.infer<typeof BackendSchema>, // .env.local에서 가져올 값
+  isCheck: z.infer<typeof IsCheckSchema> // server 살아 있는지 여부 - 현재는 없음
 ): Promise<z.infer<TResponseSchema>> {
   const headers: HeadersInit = {};
   if (!includesFile) headers["Content-Type"] = "application/json";
@@ -78,9 +78,9 @@ export async function Fetch<
 }
 
 const buildData = <TQuerySchema extends z.Schema>(
-  method: MethodType,
+  method: z.infer<typeof MethodZodSchema>,
   init: RequestInit,
-  includesFile: IncludesFileType,
+  includesFile: z.infer<typeof IncludesFileSchema>,
   requestSchema: TQuerySchema,
   requestData: z.infer<TQuerySchema>,
   url: URL

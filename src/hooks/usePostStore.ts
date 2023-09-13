@@ -1,9 +1,10 @@
+import * as z from "zod";
 import { create, useStore } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { PostStoreState } from "../types/type";
+import { PostStoreSchema } from "@/app/schema";
 
-const usePostStore = create<PostStoreState>()(
+const usePostStore = create<z.infer<typeof PostStoreSchema>>()(
   immer(
     persist(
       (set) => ({
