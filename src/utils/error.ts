@@ -11,6 +11,15 @@ export function ZodErrorReport<TDataSchema extends z.Schema>(
 ) {
   const { error } = dataSchema.safeParse(data) as z.SafeParseError<string>;
   if (error) {
-    throw error.issues.map((el) => `[${el.path}]: ${el.message}`);
+    // data의 type 에러 콘솔창에 표시
+    error.issues.map((el) => {
+      if ("received" in el && "expected" in el) {
+        console.log(
+          `[${el.path}]: 받은 타입: ${el.received}, 받아야할 타입: ${el.expected}`
+        );
+      }
+    });
+    // data는 화면에 출력되도록 반환
+    return data;
   }
 }
