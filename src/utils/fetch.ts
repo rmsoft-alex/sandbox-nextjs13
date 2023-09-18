@@ -1,13 +1,20 @@
-import { BackEndURL } from "@/types/type";
-import * as z from "zod";
-import { ZodErrorReport } from "./error";
 import {
-  BackendSchema,
   IncludesFileSchema,
   IsCheckSchema,
-  MethodZodSchema,
+  MethodSchema,
   PathSchema,
 } from "@/app/schema";
+import * as z from "zod";
+import { ZodErrorReport } from "./error";
+import { ServerURL, ServerURLType } from "@/types/type";
+
+const fetchProps = z.object({
+  code: z.number(),
+  message: z.string(),
+  resultData: z.any(),
+});
+
+type fetchPropsType = z.infer<typeof fetchProps>;
 
 /**
  * @param path path
@@ -15,8 +22,8 @@ import {
  * @param requestSchema requestData 스키마
  * @param requestData requestData
  * @param responseSchema responseData 스키마
- * @param includesFile // 파일 처부 여부 | default false
- * @param backend BackEnd.[USER, ADMIN] | default USER
+ * @param includesFile 파일 첨부 여부 | default false
+ * @param server ServerURL.[BMS] | default BMS
  * @param isCheck server alive? optional | default false
  * @returns fetch 요청에 대한 응답
  */
@@ -25,14 +32,14 @@ export async function Fetch<
   TResponseSchema extends z.Schema
 >(
   path: z.infer<typeof PathSchema>, // path
-  method: z.infer<typeof MethodZodSchema>, // method
+  method: z.infer<typeof MethodSchema>, // method
   requestSchema: TQuerySchema, // request 스키마
   requestData: z.infer<TQuerySchema>,
   responseSchema: TResponseSchema, //response 스키마
   includesFile: z.infer<typeof IncludesFileSchema>, // file 첨부 여부
-  backend: z.infer<typeof BackendSchema>, // .env.local에서 가져올 값
+  server: ServerURLType, // .env.local에서 가져올 값
   isCheck: z.infer<typeof IsCheckSchema> // server 살아 있는지 여부 - 현재는 없음
-): Promise<z.infer<TResponseSchema>> {
+): Promise<fetchPropsType> {
   const headers: HeadersInit = {};
   if (!includesFile) headers["Content-Type"] = "application/json";
 
@@ -46,16 +53,16 @@ export async function Fetch<
     cache: "no-store",
   };
 
-  const backendUrl = BackEndURL[backend as keyof typeof BackEndURL] ?? "";
+  const domain = ServerURL[server];
 
   if (isCheck) {
-    const isRunningServer = await fetchCheckingServer(backendUrl);
+    const isRunningServer = await fetchCheckingServer(domain);
     if (!isRunningServer) {
-      return;
+      throw new Error("Not connected to server");
     }
   }
 
-  const urlFullPath = `${backendUrl}${path}`;
+  const urlFullPath = `${domain}${path}`;
 
   const url = new URL(urlFullPath);
 
@@ -69,7 +76,7 @@ export async function Fetch<
         return data;
       } else {
         // zod error 처리
-        ZodErrorReport(responseSchema, data);
+        return ZodErrorReport(responseSchema, data);
       }
     })
     .catch((error) => {
@@ -78,7 +85,7 @@ export async function Fetch<
 }
 
 const buildData = <TQuerySchema extends z.Schema>(
-  method: z.infer<typeof MethodZodSchema>,
+  method: z.infer<typeof MethodSchema>,
   init: RequestInit,
   includesFile: z.infer<typeof IncludesFileSchema>,
   requestSchema: TQuerySchema,
