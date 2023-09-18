@@ -18,8 +18,8 @@ export default function Update({ params }: { params: { id: string } }) {
 
   const refresh = async (id: string) => {
     const post = await fetchPostDetail(id);
-    setTitle(post.title);
-    setBody(post.body);
+    setTitle(post?.resultData?.title);
+    setBody(post?.resultData?.body);
   };
 
   return (

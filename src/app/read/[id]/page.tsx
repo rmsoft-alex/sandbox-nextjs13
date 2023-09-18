@@ -8,7 +8,8 @@ type ReadProps = {
 
 export default async function Read(props: ReadProps) {
   const id = props.params.id;
-  const post = await fetchPostDetail(id);
+  const res = await fetchPostDetail(id);
+  const post = res?.resultData;
 
   return (
     <div className="px-[10px]">

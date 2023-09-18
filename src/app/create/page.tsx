@@ -23,18 +23,12 @@ export default function Create() {
         const title = e.target.title.value;
         const body = e.target.body.value;
 
-        // zustand의 action 사용
-        addPost({
-          id,
-          title,
-          body,
-        });
         // 글 등록 fetch
         createPost({
           id,
           title,
           body,
-        });
+        }).then((res) => addPost(res?.resultData));
         router.push(`/`);
         router.refresh();
       }}
