@@ -15,9 +15,8 @@ export const PostSchema = z.object({
 export const PostsListSchema = PostSchema.array();
 
 export const PathSchema = z.string();
-export const MethodZodSchema = z.string();
+export const MethodSchema = z.enum(["GET", "POST", "PUT", "DELETE", "PATCH"]);
 export const IncludesFileSchema = z.boolean().optional().default(false);
-export const BackendSchema = z.number().optional().default(0);
 export const IsCheckSchema = z.boolean().optional().default(false);
 
 // 전체 스토어에 대한 스키마 정의 (state + actions)
